@@ -656,6 +656,14 @@ class auth extends \auth_plugin_base {
         }
         $params['AllowCreate'] = $this->config->allowcreate == 1;
 
+        if (!empty($SESSION->wantsurl)) {
+            $returnto = (new moodle_url($SESSION->wantsurl))->out(false);
+            $loginurl = (new moodle_url(get_login_url()))->out(false);
+            if (strpos($returnto, $CFG->wwwroot) === 0 && strpos($returnto, $loginurl) !== 0) {
+                $params['ReturnTo'] = $returnto;
+            }
+        }
+
         $auth = new \SimpleSAML\Auth\Simple($this->spname);
         // Redirect to IdP login page for authentication.
         $auth->requireAuth($params);
